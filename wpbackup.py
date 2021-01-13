@@ -68,6 +68,8 @@ def run_cli():
         help='Log level',
         required=False)
         
+    args = arg_parser.parse_args()
+        
     if args.backup == args.restore:
         arg_parser.error('Must specify either --backup or --restore.')
     
