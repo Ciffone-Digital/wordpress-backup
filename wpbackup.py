@@ -79,7 +79,7 @@ def run_cli():
                 arc_filename=args.archive,
                 log=log)
     elif args.restore:
-        if (args.db_username == "" || args.db_password == ""):
+        if args.db_username == "" or args.db_password == "":
             arg_parser.error('--db-username and --db-password must be included'
                             ' when using --restore.')
         else:
