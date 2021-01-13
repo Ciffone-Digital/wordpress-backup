@@ -8,9 +8,15 @@ Run the following command to install the neccessary libraries for this script:
 ## Running
 ### backup
 you can run the command as follows:
-```python3 wpbackup.py --backup --wp-dir="/path/to/wordpress/install/" --archive="/path/to/archive.tar.gz"```
+```
+python3 wpbackup.py --backup --wp-dir="/path/to/wordpress/install/" --archive="/path/to/archive.tar.gz"
+```
 ### restore
 you can run the command as follows:
-```python3 wpbackup.py --restore --wp-dir="/path/to/install/wordpress/" --archive="/path/to/archive.tar.gz" --db-username="wpuser" --db-password="wppass"```
+```
+python3 wpbackup.py --restore --wp-dir="/path/to/install/wordpress/" --archive="/path/to/archive.tar.gz" --db-username="wpuser" --db-password="wppass"
+```
 you can also specify the db host or db name:
-```python3 wpbackup.py --restore --wp-dir="/path/to/install/wordpress/" --archive="/path/to/archive.tar.gz" --db-username="wpuser" --db-password="wppass" --db-host="localhost" --db-name="wordpress"```
+```
+python3 wpbackup.py --restore --wp-dir="/path/to/install/wordpress/" --archive="/path/to/archive.tar.gz" --db-username="wpuser" --db-password="wppass" --db-host="localhost" --db-name="wordpress"
+```
