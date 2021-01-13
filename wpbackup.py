@@ -2,6 +2,7 @@ import argparse
 import logging
 import os
 import subprocess
+from subprocess import PIPE
 import tempfile
 import tarfile
 import shutil
