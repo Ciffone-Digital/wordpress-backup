@@ -3,7 +3,9 @@ Python script for backing and restoring wordpress installations.
 
 ## pre-requisites
 Run the following command to install the neccessary libraries for this script:
-```pip3 install -r requirements.txt```
+```
+pip3 install -r requirements.txt
+```
 
 ## Running
 ### backup
