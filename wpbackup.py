@@ -101,7 +101,7 @@ def run_cli():
         
 
     
-def dump_database(wp_config_filename, db_dumpfile_name, log):
+def dump_database(wp_config_filename, db_dump_filename, log):
     wp_config = WpConfigFile(wp_config_filename)
     
     args = [
