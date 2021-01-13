@@ -117,7 +117,8 @@ def dump_database(wp_config_filename, db_dump_filename, log):
     log.info('Getting database dump...')
     
     try:
-        completed = subprocess.run(args, capture_output=True)
+        #completed = subprocess.run(args, capture_output=True) # <- introduced in python 3.7
+        completed = subprocess.run(restore_args, stdout=PIPE, stderr=PIPE)
     except FileNotFoundError as error:
         log.fatal(error)
         log.fatal('mysqldump was not found. Please install it and try again.')
@@ -182,7 +183,8 @@ def restore_database(wp_config_filename, db_dump_filename, admin_credentials, db
     
     try: 
         log.info('Copying database backup in to MySQL...')
-        completed = subprocess.run(restore_args, capture_output=True)
+        #completed = subprocess.run(restore_args, capture_output=True) # <- introduced in python 3.7
+        completed = subprocess.run(restore_args, stdout=PIPE, stderr=PIPE)
     except FileNotFoundError as error:
         log.fatal(error)
         log.fatal('mysql command was not found. Please install it and try again.')
