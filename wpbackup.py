@@ -116,6 +116,7 @@ def dump_database(wp_config_filename, db_dump_filename, log):
     ]
     
     log.info('Getting database dump...')
+    log.info(args)
     
     try:
         #completed = subprocess.run(args, capture_output=True) # <- introduced in python 3.7
