@@ -234,7 +234,7 @@ def backup(wp_dir, arc_filename, log):
     log.info('Creating archive: %s', arc_filename)
     with tarfile.open(arc_filename, 'w:gz') as stream:
         log.info('Adding database dump "%s" to archive "%s"...', db_dump_path, arc_filename)
-        stream.add(db_dump_path, arcname=DB_BUMP_ARCNAME)
+        stream.add(db_dump_path, arcname=DB_DUMP_ARCNAME)
         
         log.info('Adding wordpress directory "%s" to archive "%s"...', wp_dir, arc_filename)
         stream.add(wp_dir, arcname=WP_DIR_ARCNAME)
