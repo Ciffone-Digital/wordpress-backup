@@ -79,7 +79,7 @@ def run_cli():
     logging.basicConfig(level=str(args.log_level).upper())
     log = logging.getLogger(__name__)
     
-    if os.getlogin() != 'root':
+    if os.geteuid() != 0:
         log.fatal('This script is not being run as root.')
         exit(5)
     
