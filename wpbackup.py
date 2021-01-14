@@ -72,11 +72,16 @@ def run_cli():
         
     args = arg_parser.parse_args()
         
+        
     if args.backup == args.restore:
         arg_parser.error('Must specify either --backup or --restore.')
     
     logging.basicConfig(level=str(args.log_level).upper())
     log = logging.getLogger(__name__)
+    
+    if os.getlogin() != 'root':
+        log.fatal('This script is not being run as root.')
+        exit(5)
     
     if args.backup:
         backup(wp_dir=args.wp_dir,
@@ -105,13 +110,18 @@ def run_cli():
 def dump_database(wp_config_filename, db_dump_filename, log):
     wp_config = WpConfigFile(wp_config_filename)
     
+    tmp_login_file = ['[mysqldump]','user='+wp_config.get('DB_USER'),'password='+wp_config.get('DB_PASSWORD')]
+    
+    with open('/root/.my.cnf', 'w') as stream:
+        for line in tmp_login_file:
+            stream.write(line+'\n')
+    
     args = [
         'mysqldump',
         '-h',
         wp_config.get('DB_HOST'),
         '-u',
         wp_config.get('DB_USER'),
-        '\'--password='+wp_config.get('DB_PASSWORD')+'\'',
         wp_config.get('DB_NAME')
     ]
     
@@ -137,6 +147,8 @@ def dump_database(wp_config_filename, db_dump_filename, log):
     
     with open(db_dump_filename, 'wb') as stream:
         stream.write(completed.stdout)
+        
+    os.remove('/root/.my.cnf')
         
     log.info('Database dump complete.')
     
