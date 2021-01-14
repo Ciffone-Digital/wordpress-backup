@@ -111,7 +111,7 @@ def dump_database(wp_config_filename, db_dump_filename, log):
         wp_config.get('DB_HOST'),
         '-u',
         wp_config.get('DB_USER'),
-        '\'--password='+wp_config.get('DB_PASSWORD')+'\'',
+        '"--password='+wp_config.get('DB_PASSWORD')+'"',
         wp_config.get('DB_NAME')
     ]
     
