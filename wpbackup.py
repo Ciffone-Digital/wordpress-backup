@@ -8,7 +8,7 @@ import tarfile
 import shutil
 
 from wpconfigr import WpConfigFile
-from wpdatabase.classes import Credentials
+from wpdatabase2.classes import Credentials
 
 DB_DUMP_ARCNAME = 'database.sql'
 WP_DIR_ARCNAME = 'wp-root'
