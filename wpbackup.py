@@ -101,8 +101,8 @@ def run_cli():
             
             restore(wp_dir=args.wp_dir,
                     arc_filename=args.archive,
-                    db_user=db_user,
-                    db_pass=db_pass,
+                    db_user=args.db_username,
+                    db_pass=args.db_password,
                     db_host=args.db_host,
                     db_port=args.db_port,
                     db_name=args.db_name,
