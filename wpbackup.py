@@ -283,7 +283,7 @@ def restore(wp_dir, arc_filename, db_user, db_pass, db_host, db_port, db_name, l
     with tarfile.open(arc_filename, 'r:gz') as stream:
         log.info('Extracting wordpress directory "%s" to "%s"...',
                 WP_DIR_ARCNAME,
-                ap_dir)
+                wp_dir)
                 
         root_dir = WP_DIR_ARCNAME + os.path.sep
         root_dir_len = len(root_dir)
