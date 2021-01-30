@@ -1,2 +1,1 @@
-wpconfigr~=1.0
 wpdatabase~=1.0
