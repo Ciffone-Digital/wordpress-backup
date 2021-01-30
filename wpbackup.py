@@ -7,7 +7,8 @@ import tempfile
 import tarfile
 import shutil
 
-from wpconfigr import WpConfigFile
+#from wpconfigr import WpConfigFile
+from wpconfigr.wp_config_file import WpConfigFile
 
 DB_DUMP_ARCNAME = 'database.sql'
 WP_DIR_ARCNAME = 'wp-root'
