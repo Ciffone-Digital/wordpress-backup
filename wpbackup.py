@@ -275,9 +275,8 @@ def restore(wp_dir, arc_filename, db_user, db_pass, db_host, db_port, db_name, l
     log.info('Will extract wordpress to: %s', tmp_wp_dir_path)
     
     if os.path.exists(wp_dir):
-        log.info('Wordpress is already installed on this server. removing...')
-        # delete wp_dir & create wp_dir
-    else:
+        log.info('Wordpress is already installed on this server. exiting...')
+        exit(1)
         # create wp_dir 
         
     log.info('Opening archive: %s', arc_filename)
