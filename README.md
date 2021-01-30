@@ -18,7 +18,7 @@ you can run the command as follows:
 ```
 python3 wpbackup.py --restore --wp-dir="/path/to/install/wordpress/" --archive="/path/to/archive.tar.gz" --db-username="wpuser" --db-password="wppass"
 ```
-you can also specify the db host or db name:
+you can also specify the db host, db port, or db name:
 ```
-python3 wpbackup.py --restore --wp-dir="/path/to/install/wordpress/" --archive="/path/to/archive.tar.gz" --db-username="wpuser" --db-password="wppass" --db-host="localhost" --db-name="wordpress"
+python3 wpbackup.py --restore --wp-dir="/path/to/install/wordpress/" --archive="/path/to/archive.tar.gz" --db-username="wpuser" --db-password="wppass" --db-host="localhost" --db-port=3306 --db-name="wordpress"
 ```

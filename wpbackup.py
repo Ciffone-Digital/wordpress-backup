@@ -46,6 +46,12 @@ def run_cli():
             'restorations.',
         default="",
         required=False)
+        
+    arg_parser.add_argument('--db-port',
+        help='Database port. Required only for '
+            'restorations.',
+        default=3306,
+        required=False)
     
     arg_parser.add_argument('--db-username',
         help='Database admin username. Required only for '
@@ -101,6 +107,7 @@ def run_cli():
                     arc_filename=args.archive,
                     admin_creds=credentials,
                     db_host=args.db_host,
+                    db_port=args.db_port,
                     db_name=args.db_name,
                     log=log
             )
@@ -116,10 +123,20 @@ def dump_database(wp_config_filename, db_dump_filename, log):
         for line in tmp_login_file:
             stream.write(line+'\n')
     
+    if ':' in wp_config.get('DB_HOST'):
+        hostinfo = wp_config.get('DB_HOST').split(':')
+        db_host = hostinfo[0]
+        db_port = hostinfo[1]
+    else:
+        db_host = wp_config.get('DB_HOST')
+        db_port = 3306
+        
     args = [
         'mysqldump',
         '-h',
-        wp_config.get('DB_HOST'),
+        db_host,
+        '-P',
+        str(db_port),
         '-u',
         wp_config.get('DB_USER'),
         wp_config.get('DB_NAME')
@@ -152,12 +169,25 @@ def dump_database(wp_config_filename, db_dump_filename, log):
         
     log.info('Database dump complete.')
     
-def restore_database(wp_config_filename, db_dump_filename, admin_credentials, db_host, db_name, log):
+def restore_database(wp_config_filename, db_dump_filename, admin_credentials, db_host, db_port, db_name, log):
     wp_config = WpConfigFile(wp_config_filename)
+    
     if db_host == "":
-        db_host = wp_config.get('DB_HOST')
+        hostinfo = wp_config.get('DB_HOST')
+        if ':' in hostinfo:
+            hostinfo = hostinfo.split(':')
+            db_host = hostinfo[0]
+            db_port = hostinfo[1]
+        else:
+            db_host = hostinfo
+            db_port = 3306
+            
     else:
-        wp_config.set('DB_HOST', db_host)
+        if db_port == 3306:
+            wp_config.set('DB_HOST', db_host)
+        else:
+            hostinfo = f"{db_host}:{str(db_port)}"
+            wp_config.set('DB_HOST', hostinfo)
     
     if db_name == "":
         db_name = wp_config.get('DB_NAME')
@@ -166,30 +196,21 @@ def restore_database(wp_config_filename, db_dump_filename, admin_credentials, db
         
     wp_config.set('DB_USER', admin_credentials.username)
     wp_config.set('DB_PASSWORD', admin_credentials.password)
-        
-    '''
-    NOTE: ansible script will create the database, and 
-    the user for wordpress to connect to mysql.
     
-    create_args = [
-        'mysql',
-        '--host',
-        db_host,
-        '--user',
-        admin_credentials.username,
-        '\'--password='+admin_credentials.password+'\'',
-        '--execute',
-        'CREATE DATABASE IF NOT EXISTS {};'.format(db_name)
-    ]
-    '''
+    tmp_login_file = ['[mysql]','user='+admin_credentials.username,'password='+admin_credentials.password]
+        
+    with open('/root/.my.cnf', 'w') as stream:
+        for line in tmp_login_file:
+            stream.write(line+'\n')
     
     restore_args = [
         'mysql',
-        '--host',
+        '-h',
         db_host,
-        '--user',
+        '-P',
+        db_port,
+        '-u',
         admin_credentials.username,
-        '\'--password='+admin_credentials.password+'\'',
         db_name,
         '--execute',
         'source {};'.format(db_dump_filename)
@@ -210,6 +231,8 @@ def restore_database(wp_config_filename, db_dump_filename, admin_credentials, db
                   completed.stdout,
                   completed.stderr)
         exit(2)
+    
+    os.remove('/root/.my.cnf')
     
     log.info('Database restoration complete.')
     
@@ -241,7 +264,7 @@ def backup(wp_dir, arc_filename, log):
         
     log.info('Backup Complete')
     
-def restore(wp_dir, arc_filename, admin_creds, db_host, db_name, log):
+def restore(wp_dir, arc_filename, admin_creds, db_host, db_port, db_name, log):
     log.info('Starting restoration')
     
     temp_dir = tempfile.TemporaryDirectory()
@@ -255,8 +278,10 @@ def restore(wp_dir, arc_filename, admin_creds, db_host, db_name, log):
     log.info('Will extract wordpress to: %s', tmp_wp_dir_path)
     
     if os.path.exists(wp_dir):
-        log.info('Wordpress is already installed on this server. exiting...')
-        exit(4)
+        log.info('Wordpress is already installed on this server. removing...')
+        # delete wp_dir & create wp_dir
+    else:
+        # create wp_dir 
         
     log.info('Opening archive: %s', arc_filename)
     with tarfile.open(arc_filename, 'r:gz') as stream:
@@ -288,6 +313,7 @@ def restore(wp_dir, arc_filename, admin_creds, db_host, db_name, log):
             db_dump_filename=db_dump_path,
             admin_credentials=admin_creds,
             db_host=db_host,
+            db_port=db_port,
             db_name=db_name,
             log=log    
         )
