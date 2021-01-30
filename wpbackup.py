@@ -8,7 +8,6 @@ import tarfile
 import shutil
 
 from wpconfigr import WpConfigFile
-from wpdatabase2.classes import Credentials
 
 DB_DUMP_ARCNAME = 'database.sql'
 WP_DIR_ARCNAME = 'wp-root'
@@ -98,14 +97,11 @@ def run_cli():
             arg_parser.error('--db-username and --db-password must be included'
                             ' when using --restore.')
         else:
-            credentials = Credentials.from_username_and_password(
-                username=args.db_username,
-                password=args.db_password
-            )
             
             restore(wp_dir=args.wp_dir,
                     arc_filename=args.archive,
-                    admin_creds=credentials,
+                    db_user=db_user,
+                    db_pass=db_pass,
                     db_host=args.db_host,
                     db_port=args.db_port,
                     db_name=args.db_name,
@@ -169,7 +165,7 @@ def dump_database(wp_config_filename, db_dump_filename, log):
         
     log.info('Database dump complete.')
     
-def restore_database(wp_config_filename, db_dump_filename, admin_credentials, db_host, db_port, db_name, log):
+def restore_database(wp_config_filename, db_dump_filename, db_user, db_pass, db_host, db_port, db_name, log):
     wp_config = WpConfigFile(wp_config_filename)
     
     if db_host == "":
@@ -194,10 +190,10 @@ def restore_database(wp_config_filename, db_dump_filename, admin_credentials, db
     else:
         wp_config.set('DB_NAME', db_name)
         
-    wp_config.set('DB_USER', admin_credentials.username)
-    wp_config.set('DB_PASSWORD', admin_credentials.password)
+    wp_config.set('DB_USER', db_user)
+    wp_config.set('DB_PASSWORD', db_pass)
     
-    tmp_login_file = ['[mysql]','user='+admin_credentials.username,'password='+admin_credentials.password]
+    tmp_login_file = ['[mysql]','user='+db_user,'password='+db_pass]
         
     with open('/root/.my.cnf', 'w') as stream:
         for line in tmp_login_file:
@@ -210,7 +206,7 @@ def restore_database(wp_config_filename, db_dump_filename, admin_credentials, db
         '-P',
         db_port,
         '-u',
-        admin_credentials.username,
+        db_user,
         db_name,
         '--execute',
         'source {};'.format(db_dump_filename)
@@ -264,7 +260,7 @@ def backup(wp_dir, arc_filename, log):
         
     log.info('Backup Complete')
     
-def restore(wp_dir, arc_filename, admin_creds, db_host, db_port, db_name, log):
+def restore(wp_dir, arc_filename, db_user, db_pass, db_host, db_port, db_name, log):
     log.info('Starting restoration')
     
     temp_dir = tempfile.TemporaryDirectory()
@@ -311,7 +307,8 @@ def restore(wp_dir, arc_filename, admin_creds, db_host, db_port, db_name, log):
         restore_database(
             wp_config_filename=wp_config_filename,
             db_dump_filename=db_dump_path,
-            admin_credentials=admin_creds,
+            db_user=db_user,
+            db_pass=db_pass,
             db_host=db_host,
             db_port=db_port,
             db_name=db_name,
