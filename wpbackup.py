@@ -271,7 +271,7 @@ def restore(wp_dir, arc_filename, db_user, db_pass, db_host, db_port, db_name, l
     db_dump_path = os.path.join(temp_dir.name, DB_DUMP_ARCNAME)
     log.info('will extract the database dump to: %s', db_dump_path)
     
-    tmp_wp_dir_path = os.path.join(temp_dir.name, WP_DIR_NAME)
+    tmp_wp_dir_path = os.path.join(temp_dir.name, WP_DIR_ARCNAME)
     log.info('Will extract wordpress to: %s', tmp_wp_dir_path)
     
     if os.path.exists(wp_dir):
