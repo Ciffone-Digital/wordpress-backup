@@ -223,7 +223,7 @@ def restore_database(wp_config_filename, db_dump_filename, db_user, db_pass, db_
         exit(1)
     
     if completed.returncode != 0:
-        LOG.fatal('Database restoration failed.\n\nmysql stdout:\n%s\n\n'
+        log.fatal('Database restoration failed.\n\nmysql stdout:\n%s\n\n'
                   'mysql stderr:\n%s',
                   completed.stdout,
                   completed.stderr)
